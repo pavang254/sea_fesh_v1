@@ -1,7 +1,10 @@
 from statistics import mode
+from django.core.files.storage import FileSystemStorage
 from django.db import models
 
 # Create your models here.
+
+fs = FileSystemStorage(location='/media/photos')
 
 class Catgegory(models.Model):
     cat_id = models.IntegerField(primary_key=True)
@@ -14,6 +17,7 @@ class Product(models.Model):
     prod_id = models.IntegerField(primary_key=True)
     name = models.CharField(max_length=100)
     category = models.ForeignKey(Catgegory, default='Fish', on_delete=models.SET_DEFAULT)
+    image = models.ImageField(storage=fs, null=True)
 
     def __str__(self) -> str:
         return self.name
