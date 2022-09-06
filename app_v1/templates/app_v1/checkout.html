@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="css/checkout.css">
+    <title>Checkout</title>
+</head>
+<body>
+    <!-- Navbar -->
+    <div>
+        <nav>
+            <div class="grid grid-flow-col mt-2 text-xl p-2 items-center justify-between bg-slate-200">
+                <div>
+                    </i> <i class="fa-solid fa-house"></i>
+                </div>
+                <div>
+                    <h1 class="font-bold text-xl">Checkout</h1>
+                </div>
+                <div class="relative">
+                    <i class="fa-solid fa-cart-shopping p-1"></i><span id="cartQty" class="bg-red-400 text-black font-bold px-1 text-sm rounded-md absolute -top-2 -right-1">2</span>
+                </div>
+            </div>
+        </nav>
+    </div>
+    <!-- navbar end -->
+    <main>
+        <!-- cart details -->
+        <div class="grid p-2 bg-slate-300 rounded-md drop-shadow-lg m-1">
+            <h1 class="text-xl font-semibold text-center border-b-2 border-black shadow-md">Cart details</h1>
+            <div class="m-1">
+                <!-- Item 1 -->
+                <div class="flex gap-2 items-center text-center justify-between border-b-2 pb-2">
+                    <h1 class="text-lg font-bold">Prawns <span class="text-sm">(big)</span></h1>
+                    <p class="text-sm"><span class="font-bold">1 Kg</span></p>
+                    <p>&#8377;<span class="font-bold text-sm">450</span></p>
+                    <!-- <p class="text-sm">cleaned</p> -->
+                </div>
+                <!-- Item 2 -->
+                <div class="flex gap-2 items-center text-center justify-between border-b-2 pb-2">
+                    <h1 class="text-lg font-bold">Mackerel <span class="text-sm">(big)</span></h1>
+                    <p class="text-sm"><span class="font-bold">0.5 Kg</span></p>
+                    <p>&#8377;<span class="font-bold text-sm">350</span></p>
+                    <!-- <p class="text-sm">cleaned</p> -->
+                </div>
+            </div>
+            <div class="flex gap-2 justify-between pt-1">
+                <p class="font-bold text-lg">Items = <span>2</span></p>
+                <h1 class="font-bold text-lg">Total = &#8377;<span id="cartAmount">800</span></h1>
+            </div>
+            <div>
+                <p class="text-sm">Delivery charges = &#8377; <span>0</span></p>
+                <span class="text-xs p-0">(delivery charges are applicable for orders below &#8377;200)</span>
+            </div>
+        </div>
+        <!-- cart details end -->
+        <!-- shipping form -->
+        <div class="bg-slate-200 rounded-md drop-shadow-lg mx-1 mt-2">
+            <!-- shipping info -->
+            <div class="p-2">
+                <form action="#" method="post">
+                    <div class="pb-2">
+                        <label for="name" class="align-middle">Name</label>
+                        <input type="text" name="name" id="name" class="border-2 rounded-md border-black align-middle"><br>
+                    </div>
+                    <div class="pb-2">
+                        <label for="phone" class="align-middle">Phone</label>
+                        <input type="text" name="phone" id="phone" class="border-2 rounded-md border-black align-middle"><br>
+                    </div>
+                    <div class="pb-2">
+                        <label for="address" class="align-middle">Address</label>
+                        <input type="text" name="address" id="address" class="border-2 rounded-md border-black align-middle">
+                    </div>
+                </form>
+            </div>
+            <!-- payment method -->
+            <div class="flex justify-around items-center">
+                <p class="text-sm text-center">Payment:</p>
+                <div>
+                    <input type="radio" id="payment" name="payment" value="COD">
+                    <label for="payment">Cash on delivery</label>
+                </div>
+                <div>
+                    <input type="radio" id="payment" name="payment" value="UPI">
+                    <label for="payment">UPI</label>
+                </div>
+            </div>
+            <!-- submit -->
+            <div class=" grid justify-items-center p-2">
+                <button type="submit" class="bg-cyan-300 border-2 text-black rounded-lg p-2">Place Order</button>
+            </div>
+        </div>
+        <!-- notes -->
+        <div></div>
+    </main>
+    <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
+    <script>
+        let cartAmount = document.getElementById('cartAmount').textContent
+        console.log(cartAmount);
+        // var expires = (new Date(Date.now()+ 3600*1000)).toUTCString();
+        // document.cookie = "cart=" + cartAmount + ";expires=" + expires + ";path=/;SameSite=None; Secure";
+        sessionStorage.setItem('cart',cartAmount);
+    </script>
+</body>
+</html>

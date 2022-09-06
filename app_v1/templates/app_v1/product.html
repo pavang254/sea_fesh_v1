@@ -1,0 +1,197 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        const user = '{{ request.user }}';
+        function getToken(name) {
+            let cookieValue = null;
+            if (document.cookie && document.cookie !== '') {
+                const cookies = document.cookie.split(';');
+                for (let i = 0; i < cookies.length; i++) {
+                    const cookie = cookies[i].trim();
+                    if (cookie.substring(0, name.length + 1) === (name + '=')) {
+                        cookieValue = decodeURIComponent(cookie.substring(name.length + 1));
+                        break;
+                    }
+                }
+            }
+        return cookieValue;
+        }
+        const csrftoken = getToken('csrftoken');
+    </script>
+    <title>Sea fresh Tracker</title>
+</head>
+<body>
+	<!-- Navbar -->
+	<nav class="p-2 bg-white shadow-md sm:flex sm:items-center sm:justify-between">
+        <div class="flex justify-between items-center">
+            <a href="/"><img src="{% static 'images/logo1.png' %}" alt="logo" class="h-12 sm:h-20 border-2 border-solid border-cyan-500 rounded-full"></a>
+            <span class="text-3xl mx-2 cursor-pointer"><i class="fa-solid fa-bars sm:hidden" id="menu"></i></span>
+        </div>
+        <ul id="menu-nav" class="flex flex-col drop-shadow-lg z-[999] text-center rounded-lg absolute m-2 p-2 gap-5 w-full opacity-0 sm:opacity-100 top-[-400px] transition-all ease-in bg-white  sm:z-auto sm:w-auto sm:flex-row sm:static sm:mx-0">
+            <li>
+                <a href="#">Order Status</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa-brands fa-whatsapp"></i> Contact Us</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa-solid fa-cart-shopping"></i><span class="text-xs">0</span></a>
+            </li>
+            <li>
+                <a href="#"><i class="fa-solid fa-user"></i></a>
+            </li>
+        </ul>
+    </nav>
+    <!-- Navbar end -->
+    <!-- Search -->
+    <div class="flex gap-2 rounded-md items-center border-2 border-solid border-black">
+        <div class="flex-none">
+            <i class="p-1 fa-solid fa-magnifying-glass"></i>
+        </div>
+        <div class="w-full flex-grow">
+            <input type="text" placeholder="Search all products" name="search" id="search" class="p-1 w-full rounded-md bg-gray-100">
+        </div>
+        <div class="flex-none text-base font-semibold">
+            <button class="p-1 bg-gray-200 rounded-md">Search</button>
+        </div>
+    </div>
+    {% block content %}
+    <main>
+        <!-- product details -->
+        <div class="w-screen max-w-lg p-1 m-1 rounded-lg drop-shadow-md bg-gradient-to-r from-[#bde0fe] to-[#a2d2ff]">
+            <div>
+                <img src="{{ product.image.url }}" alt="{{ product.name }}" class="w-fit p-2 rounded-md drop-shadow-md bg-white">
+            </div>
+            <div class="flex justify-between p-2">
+                <p class="font-bold text-2xl align-middle">{{ product.name }} <span class="text-lg">(medium)</span></p>
+                <p class="text-lg mr-2 shadow-md pt-1">&#8377; <span class="font-bold">{{ product.price }}</span> /Kg</p>
+            </div>
+            <div class="text-lg flex space-x-4 p-2">
+                <div>
+                    <label for="type">Type:</label>
+                    <select name="type" id="type" class="w-auto max-w-[200px] text-center text-sm text-black py-1 rounded-md bg-white">
+                        <option value="cleaned">Cleaned</option>
+                        <option value="uncleaned">Uncleaned</option>
+                    </select>
+                </div>
+                <div class="flex space-x-2">
+                    <div>
+                        <input type="radio" id="qty-500" name="qty" value="0.5kg">
+                        <label for="qty-500">500gm</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="qty-1" name="qty" value="1kg">
+                        <label for="qty-1">1Kg</label>
+                    </div> 
+                </div>
+            </div>
+            <div>
+                <!-- remove head & tail -->
+                <div class="my-1">
+                    <div class="grid grid-flow-col items-center">
+                        <div>
+                            <input type="checkbox" id="rm-head" name="rm-head" value="rm-head">
+                            <label for="rm-head">No head</label>
+                        </div>
+                        <div>
+                            <input type="checkbox" id="rm-tail" name="rm-tail" value="rm-tail">
+                        <label for="rm-tail">No tail</label>
+                        </div>
+                        <div class="justify-self-end pr-4">
+                            <button class="bg-red-400 text-black p-1 px-3 rounded-lg">Add</button>
+                        </div>
+                    </div>
+                    <p class="text-xs text-red-700 text-end pr-2 pt-1">Customize quantity in cart</p>
+                </div>
+            </div>
+        </div>
+    </main>
+    <section>
+        <div class="m-1 p-2">
+            <p class="text-xl font-bold text-black">Similar products</p>
+        </div>
+        <div class="space-y-2 bg-white">
+            <div class="flex w-screen p-1 max-w-screen-md drop-shadow-md rounded-md bg-slate-300">
+                <div class="max-w-[40%] bg-white rounded-md">
+                    <img src="images/silver_pomfret_whole.jpg" alt="fish" class="max-w-[100%] h-auto p-1 rounded-md drop-shadow-md">
+                </div>
+                <div class="grid w-[100%] drop-shadow-md">
+                    <div class="flex gap-3 pl-2 items-center">
+                        <h1 class="text-xl">Pomfret</h1>
+                        <span class="text-base">(whole)</span>
+                    </div>
+                    <div class="flex justify-around">
+                        <div>
+                            <input type="radio" id="qty-500" name="qty" value="0.5kg">
+                            <label for="qty-500">500g</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="qty-1" name="qty" value="1kg">
+                            <label for="qty-1">1Kg</label>
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between items-center">
+                        <p class="text-lg ml-2">&#8377; <span>300</span> /Kg</p>
+                        <button class="p-[2px] px-2 bg-red-400 text-black rounded-lg">Add</button>
+                    </div>
+                </div> 
+            </div>
+            <div class="flex w-screen p-1 max-w-screen-md drop-shadow-md rounded-md bg-slate-300">
+                <div class="max-w-[40%] bg-white rounded-md">
+                    <img src="images/grouper_large.jpg" alt="seer-fish" class="max-w-[100%] h-auto p-1 rounded-md drop-shadow-md">
+                </div>
+                <div class="grid w-[100%] drop-shadow-md">
+                    <div class="flex gap-3 pl-2 items-center">
+                        <h1 class="text-xl">Grouper</h1>
+                        <span class="text-base">(big)</span>
+                    </div>
+                    <div class="flex justify-around">
+                        <div>
+                            <input type="radio" id="qty-500" name="qty" value="0.5kg">
+                            <label for="qty-500">500g</label>
+                        </div>
+                        <div>
+                            <input type="radio" id="qty-1" name="qty" value="1kg">
+                            <label for="qty-1">1Kg</label>
+                        </div>
+                    </div>
+                    <div class="flex flex-row justify-between items-center">
+                        <p class="text-lg ml-2">&#8377; <span>500</span> /Kg</p>
+                        <button class="p-[2px] px-2 bg-red-400 text-black rounded-lg">Add</button>
+                    </div>
+                </div> 
+            </div>
+        </div>
+    </section>
+    <footer class="footer footer-center bg-gray-200 text-center mt-2">
+        <div class="text-gray-700 text-center" style="background-color: rgba(0, 0, 0, 0.2);"> 
+            <p class="text-sm">Copyright © 2022 - <a href="/"><span class="text-lg font-bold text-black">Sea Fresh</span></p></a>
+            <p class="text-black text-lg"><i class="fa-brands fa-google-pay align-middle"></i> <span class="font-bold text-sm">9871234758</span></p>
+        </div>
+    </footer>
+    {% endblock %}
+    <script>
+        const menuBtn = document.getElementById("menu");
+        menuBtn.addEventListener('click', (e)=>{
+            let list = document.getElementById('menu-nav');
+            menuBtn.className === "fa-solid fa-bars sm:hidden" ? (
+                menuBtn.className = "fa-solid fa-xmark sm:hidden", list.classList.add('top-[55px]'),list.classList.add('opacity-90')
+                ) : (
+                    menuBtn.className = "fa-solid fa-bars sm:hidden", list.classList.remove('top-[55px]'),list.classList.remove('opacity-90')
+                    );
+        })
+        // const incBtn = document.getElementById('inc-{{ product.name }}-{{ product.id }}');
+        // const decBtn = document.getElementById('dec-{{ product.name }}-{{ product.id }}');
+        const cartItems = document.getElementById('cart-{{ product.name }}-{{ product.id }}');
+        const addBtn = document.getElementById('btn-{{ product.name }}-{{ product.id }}');
+    </script>
+    <!-- <script type="text/javascript" src="{% static 'js/cart.js' %}"></script> -->
+</body>
+</html>

@@ -1,0 +1,132 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <!-- <link rel="stylesheet" href="css/main.css"> -->
+    <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/> 
+    <title>Final Home</title>
+</head>
+<body class="font-roboto">
+    <!-- Navbar -->
+	<nav class="p-2 bg-white shadow-md sm:flex sm:items-center sm:justify-between">
+        <div class="flex justify-between items-center">
+            <a href="/"><img src="{% static 'images/logo1.png' %}" alt="logo" class="h-12 sm:h-20 border-2 border-solid border-cyan-500 rounded-full"></a>
+            <span class="text-3xl mx-2 cursor-pointer"><i class="fa-solid fa-bars sm:hidden" id="menu"></i></span>
+        </div>
+        <ul id="menu-nav" class="flex flex-col text-center rounded-lg absolute m-2 p-2 gap-5 w-full opacity-0 sm:opacity-100 top-[-400px] transition-all ease-in bg-white z-[999] sm:z-auto sm:w-auto sm:flex-row sm:static sm:mx-0">
+            <li>
+                <a href="#">Order Status</a>
+            </li>
+            <li>
+                <a href="#"><i class="fa-brands fa-whatsapp"></i> Contact Us</a>
+            </li>
+            <li>
+                <a href="{% url 'cart' %}"><i class="fa-solid fa-cart-shopping"></i><span class="text-xs" id="cartQty">0</span></a>
+            </li>
+            <li>
+                <a href="#"><i class="fa-solid fa-user"></i></a>
+            </li>
+        </ul>
+    </nav>
+    <!-- Navbar end -->
+    <!-- Search -->
+    <div class="flex gap-2 rounded-md items-center border-2 border-solid border-black">
+        <div class="flex-none">
+            <i class="p-1 fa-solid fa-magnifying-glass"></i>
+        </div>
+        <div class="w-full flex-grow">
+            <input type="text" placeholder="Search all products" name="search" id="search" class="p-1 w-full rounded-md bg-gray-100">
+        </div>
+        <div class="flex-none text-base font-semibold">
+            <button class="p-1 bg-gray-200 rounded-md">Search</button>
+        </div>
+    </div>
+    {% block content %}
+    <div class="text-center m-2 text-lg font-semibold">
+        <h1>Shop By Category</h1>
+    </div>
+    <!-- Categories -->
+    <div class="grid grid-flow-col gap-2 items-center my-4 justify-evenly text-center text-sm sm:text-2xl ">
+        {% for category in categories %}
+        <div>
+            <a href="{% url 'category_detail' category.cat_name %}">
+                <img src="{{ category.cat_image.url }}" alt="{{ category.cat_name }}" class="shadow-md w-fit max-h-24 rounded-full mb-2">
+                <h2>{{ category.cat_name }}</h2>
+            </a>
+        </div>
+        {% endfor %}
+    </div>
+    <!-- Categories End -->
+    <main>
+    <!-- Products Section -->
+    <!-- Swiper -->
+    <div class="swiper mySwiper">
+		<div class="swiper-wrapper pb-1">
+            {% for product in products %}
+			<div class="swiper-slide">
+				<div class="grid grid-flow-row rounded-md shadow-md">
+					<a href="{% url 'product_detail' product.product_slug %}">
+						<div>
+							<img class="rounded-md shadow-md" src="{{ product.image.url }}" alt="{{ product.name }}">
+						</div>
+						<div class="text-center text-xs m-1 sm:text-lg md:text-xl">
+							<p>{{ product.name }}</p>
+							<p>&#8377; {{ product.price }}</p>
+							<button class="p-1 rounded-md hover:bg-red-600 bg-red-400 text-white sm:px-3 sm:m-1">Customize</button>
+						</div>
+					</a>
+				</div>
+			</div>
+            {% endfor %}
+		</div>
+		<div class="swiper-pagination"></div>
+	</div>
+    </main>
+	<!-- Product list -->
+	<div class="space-y-2 bg-white">
+        {% for product in products|slice:":4" %}
+        <div class="flex w-screen p-1 max-w-screen-md drop-shadow-md rounded-md bg-slate-300">
+            <div class="max-w-[40%] bg-white rounded-md">
+                <a href="{% url 'product_detail' product.product_slug %}">
+                    <img src="{{ product.image.url }}" alt="{{ product.name }}" class="max-w-[100%] h-auto p-1 rounded-md drop-shadow-md">
+                </a>
+            </div>
+            <div class="grid w-[100%] drop-shadow-md">
+                <div class="flex gap-3 pl-2 items-center">
+                    <h1 class="text-xl font-bold">{{ product.name }}</h1>
+                    <span class="text-base">(big)</span>
+                </div>
+                <div class="flex justify-around">
+                    <div>
+                        <input type="radio" id="qty-500" name="qty" value="0.5kg">
+                        <label for="qty-500">500g</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="qty-1" name="qty" value="1kg">
+                        <label for="qty-1">1Kg</label>
+                    </div>
+                </div>
+                <div class="flex flex-row justify-between items-center">
+                    <p class="text-sm ml-2">&#8377; <span class="text-lg font-bold">{{ product.price }}</span> /Kg</p>
+                    <button class="p-[2px] px-3 mr-2 bg-red-400 text-black rounded-lg add-btn" data-id="{{ product.id }}" data-name="{{ product.name }}">Add</button>
+                </div>
+            </div> 
+        </div>
+        {% endfor %}
+    </div>
+    {% endblock %}
+    <footer class="footer footer-center bg-gray-200 text-center mt-2">
+        <div class="text-gray-700 text-center" style="background-color: rgba(0, 0, 0, 0.2);"> 
+            <p class="text-sm">Copyright © 2022 - <a href="/"><span class="text-lg font-bold text-black">Sea Fresh</span></p></a>
+            <p class="text-black text-lg"><i class="fa-brands fa-google-pay align-middle"></i> <span class="font-bold text-sm">9871234758</span></p>
+        </div>
+    </footer>
+    <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+	<script type="text/javascript" src="{% static 'js/home.js' %}"></script>
+</body>
+</html>

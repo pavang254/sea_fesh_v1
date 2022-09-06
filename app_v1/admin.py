@@ -6,5 +6,4 @@ from .models import *
 
 admin.site.register(Catgegory)
 admin.site.register(Product)
-admin.site.register(Size_Price)
-admin.site.register(Prod_details)
+admin.site.register(Fresh_Catch)
