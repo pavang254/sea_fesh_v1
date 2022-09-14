@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <link rel="stylesheet" href="css/checkout.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- <link rel="stylesheet" href="css/checkout.css"> -->
     <title>Checkout</title>
 </head>
 <body>
@@ -25,29 +26,23 @@
         </nav>
     </div>
     <!-- navbar end -->
-    <main>
+    <main class="max-w-lg">
         <!-- cart details -->
         <div class="grid p-2 bg-slate-300 rounded-md drop-shadow-lg m-1">
-            <h1 class="text-xl font-semibold text-center border-b-2 border-black shadow-md">Cart details</h1>
+            <h1 class="text-xl font-semibold text-center border-b-2 border-black shadow-md">Order Summary</h1>
             <div class="m-1">
-                <!-- Item 1 -->
+                {% for item in items %}
                 <div class="flex gap-2 items-center text-center justify-between border-b-2 pb-2">
-                    <h1 class="text-lg font-bold">Prawns <span class="text-sm">(big)</span></h1>
-                    <p class="text-sm"><span class="font-bold">1 Kg</span></p>
-                    <p>&#8377;<span class="font-bold text-sm">450</span></p>
+                    <h1 class="text-lg font-bold">{{item.product.name}} <span class="text-sm">(big)</span></h1>
+                    <p class="text-sm"><span class="font-bold">{{ item.quantity }} Kg</span></p>
+                    <p>&#8377;<span class="font-bold text-sm">&#8377;{{ item.get_total|floatformat:0 }}</span></p>
                     <!-- <p class="text-sm">cleaned</p> -->
                 </div>
-                <!-- Item 2 -->
-                <div class="flex gap-2 items-center text-center justify-between border-b-2 pb-2">
-                    <h1 class="text-lg font-bold">Mackerel <span class="text-sm">(big)</span></h1>
-                    <p class="text-sm"><span class="font-bold">0.5 Kg</span></p>
-                    <p>&#8377;<span class="font-bold text-sm">350</span></p>
-                    <!-- <p class="text-sm">cleaned</p> -->
-                </div>
+                {% endfor %}
             </div>
-            <div class="flex gap-2 justify-between pt-1">
-                <p class="font-bold text-lg">Items = <span>2</span></p>
-                <h1 class="font-bold text-lg">Total = &#8377;<span id="cartAmount">800</span></h1>
+            <div class="flex gap-2 justify-between pt-1 border-t-2 border-black">
+                <p class="font-bold text-lg">Items = <span>{{ order.get_cart_items }}</span></p>
+                <h1 class="font-bold text-lg">Total = &#8377;<span id="cartAmount">{{ order.get_cart_total|floatformat:0 }}</span></h1>
             </div>
             <div>
                 <p class="text-sm">Delivery charges = &#8377; <span>0</span></p>
@@ -57,9 +52,11 @@
         <!-- cart details end -->
         <!-- shipping form -->
         <div class="bg-slate-200 rounded-md drop-shadow-lg mx-1 mt-2">
+            <p class="font-bold text-lg">Delivery Info</p>
             <!-- shipping info -->
-            <div class="p-2">
-                <form action="#" method="post">
+            <form id="form">
+                {% csrf_token %}
+                <div class="p-2">
                     <div class="pb-2">
                         <label for="name" class="align-middle">Name</label>
                         <input type="text" name="name" id="name" class="border-2 rounded-md border-black align-middle"><br>
@@ -72,35 +69,85 @@
                         <label for="address" class="align-middle">Address</label>
                         <input type="text" name="address" id="address" class="border-2 rounded-md border-black align-middle">
                     </div>
-                </form>
-            </div>
-            <!-- payment method -->
-            <div class="flex justify-around items-center">
-                <p class="text-sm text-center">Payment:</p>
-                <div>
-                    <input type="radio" id="payment" name="payment" value="COD">
-                    <label for="payment">Cash on delivery</label>
                 </div>
-                <div>
-                    <input type="radio" id="payment" name="payment" value="UPI">
-                    <label for="payment">UPI</label>
+                <!-- payment method -->
+                <div class="flex justify-around items-center">
+                    <p class="text-sm text-center">Payment:</p>
+                    <div>
+                        <input type="radio" id="payment" name="payment" value="CASH_ON_DELIVERY">
+                        <label for="payment">Cash on delivery</label>
+                    </div>
+                    <div>
+                        <input type="radio" id="payment" name="payment" value="Upi">
+                        <label for="payment">UPI</label>
+                    </div>
                 </div>
-            </div>
-            <!-- submit -->
-            <div class=" grid justify-items-center p-2">
-                <button type="submit" class="bg-cyan-300 border-2 text-black rounded-lg p-2">Place Order</button>
-            </div>
+                <!-- submit -->
+                <div class="grid justify-items-center p-2">
+                    <button type="submit" class="bg-cyan-300 text-black rounded-lg py-2 px-4">Place Order</button>
+                </div>
+            </form>
         </div>
         <!-- notes -->
-        <div></div>
     </main>
+    <footer class="footer footer-center bg-gray-200 text-center mt-2">
+        <div class="text-gray-700 text-center" style="background-color: rgba(0, 0, 0, 0.2);"> 
+            <p class="text-sm">Copyright &#169; 2022 - <a href="/"><span class="text-lg text-black">Sea Fresh</span></p></a>
+            <p class="text-black text-lg"><i class="fa-brands fa-google-pay align-middle"></i> <span class="font-bold text-sm">9871234758</span></p>
+        </div>
+    </footer>
     <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
     <script>
-        let cartAmount = document.getElementById('cartAmount').textContent
-        console.log(cartAmount);
-        // var expires = (new Date(Date.now()+ 3600*1000)).toUTCString();
-        // document.cookie = "cart=" + cartAmount + ";expires=" + expires + ";path=/;SameSite=None; Secure";
-        sessionStorage.setItem('cart',cartAmount);
+        var total = '{{ order.get_cart_total|floatformat:2 }}';
+        console.log('total=', total)
+
+        var form = document.getElementById('form');
+        form.addEventListener('submit', function(e){
+            e.preventDefault();
+            formSubmit();
+            console.log('form submitted');
+        })
+        function formSubmit(){
+            console.log('order confirm button clicked')
+
+            var userDetails = {
+				'name':null,
+				'phone':null,
+				'address':null,
+                'total':total,
+                'payment':null,
+			}
+            userDetails.name = form.name.value
+            userDetails.phone = form.phone.value
+            userDetails.address = form.address.value
+            userDetails.payment = form.payment.value
+
+            console.log('User details:', userDetails)
+
+            var url = 'http://127.0.0.1:8000/process_order/';
+            fetch(url,{
+                method:'POST',
+                headers:{
+                    'Content-Type':'application/json',
+                    'X-CSRFToken':csrftoken,
+                },
+                body:JSON.stringify({'form':userDetails}),
+            })
+            .then((response)=>response.json())
+            .then((data)=>{
+                console.log('data:', data);
+                alert('Order submitted, wait for further updates');
+
+                cart = {}
+				var expires = (new Date(Date.now()+ 300*1000)).toUTCString();  //5 min expiry after successfully submitting order
+			    document.cookie ="cart=" + JSON.stringify(cart) +";expires="+expires+ ";SameSite=None;Secure;domain=;path=/"
+
+                window.location.href = "{% url 'home' %}"
+            })
+        }
     </script>
 </body>
 </html>

@@ -6,4 +6,7 @@ from .models import *
 
 admin.site.register(Catgegory)
 admin.site.register(Product)
-admin.site.register(Fresh_Catch)
+admin.site.register(FreshCatch)
+admin.site.register(Customer)
+admin.site.register(Order)
+admin.site.register(OrderItem)

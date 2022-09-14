@@ -1,0 +1,117 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <style>
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { 
+        -webkit-appearance: none; 
+        }
+
+        input[type=number] {
+        -moz-appearance: textfield;
+        }
+    </style>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <title>Cart</title>
+</head>
+<body>
+    <div class="grid grid-flow-col mt-2 text-xl p-2 items-center justify-between bg-slate-200">
+        <div>
+            <a href="{% url 'home' %}">
+                <i class="fa-solid fa-arrow-left-long"></i> <i class="fa-solid fa-house"></i>
+            </a>
+        </div>
+        <div>
+            <h1 class="font-bold text-xl">Review Cart</h1>
+        </div>
+        <div class="relative">
+            <i class="fa-solid fa-cart-shopping p-1"></i><span id="cartQty" class="bg-red-400 text-black font-bold px-1 text-sm rounded-md absolute -top-2 -right-1">{{ order.get_cart_items }}</span>
+        </div>
+    </div>
+    <main>
+        <!-- Total amount -->
+        <div class="p-2 m-2 flex flex-row justify-between items-center font-bold text-xl border-b-2 border-black">
+            <p>Items : <span id="items">{{ order.get_cart_items }}</span></p>
+            <h1>Total = &#8377; <span id="totalAmount">{{ order.get_cart_total|floatformat:0 }}</span>/-</h1>
+        </div>
+        <!-- Cart items -->
+        <div class="space-y-4">
+            {% for item in items %}
+            <div class="flex w-screen bg-slate-100">
+                <!-- Image and delete -->
+                <div class="w-1/3 items-center text-center rounded-md shadow-md">
+                    <img src="{{ item.product.image.url }}" alt="{{ item.product.name }}" class="rounded-md shadow-md">
+                    <i id="delete" data-id="{{ item.product.id }}" class="fa-regular fa-trash-can cursor-pointer text-xs"></i>
+                </div>
+                <!-- form div -->
+                <div class="w-2/3 rounded-lg drop-shadow-md pl-1">
+                    <!-- name, price and X -->
+                    <div class="flex pl-1 justify-between">
+                        <p class="text-lg font-bold">{{ item.product.name }} <span class="text-sm font-semibold">(Big)</span><span class="text-sm font-normal pl-2">&#8377;<span>{{ item.product.price|floatformat:0 }}</span>/Kg.</span></p>
+                        <i id="delete" data-id="1" class="fa-solid fa-x cursor-pointer text-lg font-bold text-red-600 pt-1 pr-2"></i>
+                    </div>
+                    <!-- quantity -->
+                    <div class="flex pl-1 py-1 justify-evenly">
+                        <div class="flex space-x-2">
+                            <div>
+                                <input type="radio" id="qty-500" name="qty" value="0.5kg">
+                                <label for="qty-500">500gm</label>
+                            </div>
+                            <div>
+                                <input type="radio" id="qty-1" name="qty" value="1kg">
+                                <label for="qty-1">1Kg</label>
+                            </div> 
+                        </div>
+                        <div class="flex flex-row gap-2">
+                            <div>
+                                <i data-product="{{ item.product.name }}" data-id="{{ item.product.id }}" id="dec-id-{{ item.product.id }}" class="fa-solid fa-minus hover:cursor-pointer text-xs"></i>
+                            </div>
+                            <div id="qty-{{ item.product.id }}">
+                                <input type="number" name="quantity" value="1" id="qtyInput-id-{{ item.product.id }}" min="0.5" max="3" class="text-xs border-2 border-black text-center w-6">
+                            </div>
+                            <div>
+                                <i data-product="{{ item.product.name }}" data-id="{{ item.product.id }}" id="inc-id-{{ item.product.id }}" class="fa-solid fa-plus hover:cursor-pointer text-xs"></i>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- remove head & tail -->
+                    <div class="pl-1">
+                        <div>
+                            <label for="type">Type:</label>
+                            <select name="type" id="type" class="w-auto max-w-[200px] text-center text-xs py-1 rounded-md">
+                                <option value="cleaned">Cleaned</option>
+                                <option value="uncleaned">Uncleaned</option>
+                            </select>
+                        </div>
+                        <div class="flex gap-4 pt-1">
+                            <div>
+                                <input type="checkbox" id="rm-head" name="rm-head" value="rm-head">
+                                <label for="rm-head">No-head</label>
+                            </div>
+                            <div>
+                                <input type="checkbox" id="rm-tail" name="rm-tail" value="rm-tail">
+                                <label for="rm-tail">No-tail</label>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- quantity final and amount -->
+                    <div class="flex border-t-2 border-black justify-between">
+                        <span>Qty= {{ item.quantity }} kg</span>
+                        <span>You pay= &#8377;{{ item.get_total|floatformat:0 }}</span>
+                    </div>
+                </div>
+            </div>
+            <a href="{% url 'checkout'%}">
+                <button class="flex float-right rounded-md mr-2 p-2 bg-red-400 text-black">Checkout</button>
+            </a>
+            {% endfor %}
+        </div>
+   </main>
+    <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
+    <!-- <script src="js/cart.js"></script> -->
+</body>
+</html>

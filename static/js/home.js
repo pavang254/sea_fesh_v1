@@ -28,32 +28,49 @@ menuBtn.addEventListener('click', (e)=>{
 const addCart = document.getElementsByClassName('add-btn');
 for (i = 0; i < addCart.length ; i++){
     addCart[i].addEventListener('click', function(event){
-        if(event.target.innerHTML === 'In Cart'){
-            window.location.replace("/cart");
+        if(event.target.textContent == 'In Cart'){
+            window.location.href = '/cart';
         }else{
-            event.target.innerHTML = 'In Cart';
             let productId = this.dataset.id;
-            let productName = this.dataset.name;
-            cart(productId, productName);
+            let action = this.dataset.action;
+            
+            try{
+                let qty = Number(document.querySelector(`input[name="${productId}-qty"]:checked`).value);
+                console.log(`quantity of this ${productId} = `, qty);
+                updateCart(productId, action, qty);
+                event.target.innerHTML = 'In Cart';
+            }
+            catch{
+                alert('Please select quantity and then add to cart!');
+            }
         }
     });
 }
 
-//cart logic function
-let basket= JSON.parse(localStorage.getItem("cart")) || [];
+/* cart function through django
+ cart ={
+     1:{'quantity:':4},
+     4:{'quantity:':1},
+     7:{'quantity:':2},
+ } */
 
-if (basket !== []){
-    document.getElementById('cartQty').innerHTML = basket.map((p)=>p.qty).reduce((x,y)=>x+y, 0);
-}
-
-function cart(id, name){
-    var item = basket.find((p)=>p.id === id);
-
-    if (item === undefined){
-        basket.push({
-            id:id,
-            name:name
-        });
+function updateCart(productId, action, qty){
+    if(action === 'add'){
+        if(cart[productId] === undefined){
+            cart[productId] = {'quantity':qty}
+        }else{
+            cart[productId]['quantity'] +=Number(qty)
+        }
+        console.log('added to cart');
     }
-    localStorage.setItem('cart', JSON.stringify(basket));
+    
+    if(action == 'remove'){
+        cart[productId]['quantity'] -=1;
+
+        if(cart[productId]['quantity']<=0){
+            console.log('item will be deleted from cart');
+            delete cart[productId];
+        }
+    }
+    document.cookie ='cart=' + JSON.stringify(cart) +";SameSite=None;Secure;domain=;path=/"
 }

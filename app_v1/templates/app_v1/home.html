@@ -6,17 +6,45 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <!-- <link rel="stylesheet" href="css/main.css"> -->
-    <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
     <script src="https://cdn.tailwindcss.com"></script>
-	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/> 
-    <title>Final Home</title>
+	<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.css"/>
+    <script>
+        function getCookie(name) {
+		    // Split cookie string and get all individual name=value pairs in an array
+		    var cookieArr = document.cookie.split(";");
+
+		    // Loop through the array elements
+		    for(var i = 0; i < cookieArr.length; i++) {
+		        var cookiePair = cookieArr[i].split("=");
+		        /* Removing whitespace at the beginning of the cookie name
+		        and compare it with the given string */
+		        if(name == cookiePair[0].trim()) {
+		            // Decode the cookie value and return
+		            return decodeURIComponent(cookiePair[1]);
+		        }
+		    }
+		    // Return null if not found
+		    return null;
+		}
+		var cart = JSON.parse(getCookie('cart'))
+		if (cart == undefined){
+			cart = {}
+			console.log('Cart Created!', cart)
+            var expires = (new Date(Date.now()+ 1800*1000)).toUTCString();  //30 min expiry
+			document.cookie ='cart=' + JSON.stringify(cart) +";expires="+expires+ ";SameSite=None;Secure;domain=;path=/"
+		}else{
+            var expires = (new Date(Date.now()+ 1800*1000)).toUTCString();  //30 min expiry
+			document.cookie ='cart=' + JSON.stringify(cart) +";expires="+expires+ ";SameSite=None;Secure;domain=;path=/"
+        }
+    </script>
+    <title>Sea Fresh</title>
 </head>
 <body class="font-roboto">
     <!-- Navbar -->
 	<nav class="p-2 bg-white shadow-md sm:flex sm:items-center sm:justify-between">
         <div class="flex justify-between items-center">
             <a href="/"><img src="{% static 'images/logo1.png' %}" alt="logo" class="h-12 sm:h-20 border-2 border-solid border-cyan-500 rounded-full"></a>
-            <span class="text-3xl mx-2 cursor-pointer"><i class="fa-solid fa-bars sm:hidden" id="menu"></i></span>
+            <span class="text-3xl mx-2 cursor-pointer sm:hidden"><i class="fa-solid fa-bars" id="menu"></i></span>
         </div>
         <ul id="menu-nav" class="flex flex-col text-center rounded-lg absolute m-2 p-2 gap-5 w-full opacity-0 sm:opacity-100 top-[-400px] transition-all ease-in bg-white z-[999] sm:z-auto sm:w-auto sm:flex-row sm:static sm:mx-0">
             <li>
@@ -26,10 +54,10 @@
                 <a href="#"><i class="fa-brands fa-whatsapp"></i> Contact Us</a>
             </li>
             <li>
-                <a href="{% url 'cart' %}"><i class="fa-solid fa-cart-shopping"></i><span class="text-xs" id="cartQty">0</span></a>
+                <a href="{% url 'cart' %}"><i class="fa-solid fa-cart-shopping"></i><span class="text-xs" id="cartQty">0</span></a> <!-- cart items quantity -->
             </li>
             <li>
-                <a href="#"><i class="fa-solid fa-user"></i></a>
+                <a href="/admin/"><i class="fa-solid fa-user"></i></a>
             </li>
         </ul>
     </nav>
@@ -66,9 +94,9 @@
     <!-- Products Section -->
     <!-- Swiper -->
     <div class="swiper mySwiper">
-		<div class="swiper-wrapper pb-1">
+		<div class="swiper-wrapper pb-5 mb-2">
             {% for product in products %}
-			<div class="swiper-slide">
+			<div class="swiper-slide bg-slate-200">
 				<div class="grid grid-flow-row rounded-md shadow-md">
 					<a href="{% url 'product_detail' product.product_slug %}">
 						<div>
@@ -76,7 +104,7 @@
 						</div>
 						<div class="text-center text-xs m-1 sm:text-lg md:text-xl">
 							<p>{{ product.name }}</p>
-							<p>&#8377; {{ product.price }}</p>
+							<p>&#8377; {{ product.price|floatformat:0 }}</p>
 							<button class="p-1 rounded-md hover:bg-red-600 bg-red-400 text-white sm:px-3 sm:m-1">Customize</button>
 						</div>
 					</a>
@@ -86,10 +114,11 @@
 		</div>
 		<div class="swiper-pagination"></div>
 	</div>
-    </main>
+    
+    {% csrf_token %}
 	<!-- Product list -->
 	<div class="space-y-2 bg-white">
-        {% for product in products|slice:":4" %}
+        {% for product in products|slice:":6" %}
         <div class="flex w-screen p-1 max-w-screen-md drop-shadow-md rounded-md bg-slate-300">
             <div class="max-w-[40%] bg-white rounded-md">
                 <a href="{% url 'product_detail' product.product_slug %}">
@@ -103,30 +132,35 @@
                 </div>
                 <div class="flex justify-around">
                     <div>
-                        <input type="radio" id="qty-500" name="qty" value="0.5kg">
+                        <input type="radio" id="qty-500" name="{{product.id}}-qty" value="0.5">
                         <label for="qty-500">500g</label>
                     </div>
                     <div>
-                        <input type="radio" id="qty-1" name="qty" value="1kg">
+                        <input type="radio" id="qty-1" name="{{product.id}}-qty" value="1">
                         <label for="qty-1">1Kg</label>
                     </div>
                 </div>
                 <div class="flex flex-row justify-between items-center">
-                    <p class="text-sm ml-2">&#8377; <span class="text-lg font-bold">{{ product.price }}</span> /Kg</p>
-                    <button class="p-[2px] px-3 mr-2 bg-red-400 text-black rounded-lg add-btn" data-id="{{ product.id }}" data-name="{{ product.name }}">Add</button>
+                    <p class="text-sm ml-2">&#8377; <span class="text-lg font-bold">{{ product.price|floatformat:0 }}</span> /Kg</p>
+                    <button class="p-[2px] px-3 mr-2 bg-red-400 text-black rounded-lg add-btn" data-id="{{ product.id }}" data-action="add">Add</button>
                 </div>
             </div> 
         </div>
         {% endfor %}
     </div>
+    </main>
     {% endblock %}
     <footer class="footer footer-center bg-gray-200 text-center mt-2">
         <div class="text-gray-700 text-center" style="background-color: rgba(0, 0, 0, 0.2);"> 
-            <p class="text-sm">Copyright © 2022 - <a href="/"><span class="text-lg font-bold text-black">Sea Fresh</span></p></a>
+            <p class="text-sm">Copyright &#169; 2022 - <a href="/"><span class="text-lg text-black">Sea Fresh</span></p></a>
             <p class="text-black text-lg"><i class="fa-brands fa-google-pay align-middle"></i> <span class="font-bold text-sm">9871234758</span></p>
         </div>
     </footer>
     <script src="https://cdn.jsdelivr.net/npm/swiper@8/swiper-bundle.min.js"></script>
+    <script src="https://kit.fontawesome.com/714392a810.js" crossorigin="anonymous"></script>
+    <script type="text/javascript">
+        const csrftoken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    </script>
 	<script type="text/javascript" src="{% static 'js/home.js' %}"></script>
 </body>
 </html>
